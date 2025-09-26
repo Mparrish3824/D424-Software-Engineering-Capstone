@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class HealthController {
 
@@ -17,4 +18,5 @@ public class HealthController {
         response.put("timestamp", LocalDateTime.now().toString());
         return response;
     }
+
 }
