@@ -20,12 +20,6 @@ public class UserController {
     @Autowired
     private UserOrganizationService userOrganizationService;
 
-
-    @GetMapping("/api/user/search")
-    public User findByUsername (@RequestParam String username) {
-        return userService.findByUsername(username);
-    }
-
     @GetMapping("/api/users/{userId}/organizations")
     public List<UserOrganization> getOrganizationsByUser(@PathVariable Integer userId) {
         return userOrganizationService.getOrganizationsByUser(userId);
@@ -61,3 +55,4 @@ public class UserController {
 
 
 }
+
