@@ -47,6 +47,17 @@ public class UserController {
         }
     }
 
+    @GetMapping("/api/user/search")
+    public User findByEmailOrUsername(@RequestParam(required = false) String email,
+                                      @RequestParam(required = false) String username) {
+        if (email != null) {
+            return userService.findByEmail(email);
+        } else if (username != null) {
+            return userService.findByUsername(username);
+        } else {
+            throw new RuntimeException("Either email or username must be provided");
+        }
+    }
 
 
 }
