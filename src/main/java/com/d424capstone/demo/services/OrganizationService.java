@@ -56,10 +56,20 @@ public class OrganizationService {
         }
         return orgs;
     }
-    public Organization findByOrgCode(String orgCode) {
-        return organizationRepository.findByOrgCode(orgCode).orElseThrow(() -> new RuntimeException("Organization code not found"));
-    }
+
     public Optional<Organization> findById(Integer id) {
         return organizationRepository.findById(id);
     }
+
+    public Organization findByOrgCode(String orgCode) {
+    Optional<Organization> org = organizationRepository.findByOrgCode(orgCode);
+    if (org.isEmpty()) {
+        throw new RuntimeException("Organization not found with code: " + orgCode);
+    }
+    return org.get();
 }
+
+
+    
+}
+
