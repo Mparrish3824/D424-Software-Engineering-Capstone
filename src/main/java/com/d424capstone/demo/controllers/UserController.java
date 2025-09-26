@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+
 import java.util.List;
 
 @RestController
@@ -53,6 +56,24 @@ public class UserController {
         }
     }
 
+@Autowired
+private EntityManager entityManager;
 
+@PostMapping("/api/admin/fix-password-nullable")
+@Transactional
+public ResponseEntity<String> fixPasswordNullable() {
+    try {
+        entityManager.createNativeQuery("ALTER TABLE users MODIFY COLUMN user_password VARCHAR(255) NULL")
+                    .executeUpdate();
+        return ResponseEntity.ok("Password column updated to nullable");
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body("Migration failed: " + e.getMessage());
+    }
 }
+
+
+
+    
+}
+
 
