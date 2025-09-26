@@ -55,16 +55,16 @@ public class UserService {
 
 
 
-//    Forgot Username
+    public User updateUserRole(Integer userId, String newRole) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
 
-
-
-
-//    Forgot Password
-
-
-
-//    Remove Member from Org
-
+        User user = userOpt.get();
+        user.setUserRole(newRole);
+        return userRepository.save(user);
+    }
 
 }
+
