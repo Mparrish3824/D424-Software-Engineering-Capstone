@@ -41,10 +41,32 @@ public class OrganizationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdOrg);
     }
 
+        @PostMapping("/api/organizations/create-with-coordinator")
+    public ResponseEntity<Organization> createOrganizationWithCoordinator(
+            @RequestBody CreateOrgRequest request,
+            @RequestParam Integer userId) {
+
+        try {
+            // Create organization
+            Organization org = organizationService.createNewOrganization(request.toOrganization());
+
+            // Add user as coordinator
+            userOrganizationService.addUserToOrganization(String.valueOf(userId), org.getId(), "coordinator");
+
+            // Update user role to coordinator
+            userService.updateUserRole(userId, "coordinator");
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(org);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
     // Update organization
     @PutMapping("/api/organizations/update")
     public Organization updateOrganization(@RequestBody Organization organization) {
         return organizationService.updateOrganization(organization);
     }
 }
+
 
