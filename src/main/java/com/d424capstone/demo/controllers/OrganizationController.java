@@ -23,8 +23,13 @@ public class OrganizationController {
     }
 
     @GetMapping("/api/organizations/search/code")
-    public Organization findByCode(@RequestParam String code) {
-        return organizationService.findByOrgCode(code);
+    public ResponseEntity<Organization> findByOrgCode(@RequestParam String orgCode) {
+        try {
+            Organization org = organizationService.findByOrgCode(orgCode);
+            return ResponseEntity.ok(org);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
     @GetMapping("/api/organizations/{id}")
     public Organization findById(@PathVariable Integer id) {
@@ -68,5 +73,6 @@ public class OrganizationController {
         return organizationService.updateOrganization(organization);
     }
 }
+
 
 
