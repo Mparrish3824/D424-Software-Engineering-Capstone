@@ -46,21 +46,25 @@ public class OrganizationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdOrg);
     }
 
-        @PostMapping("/api/organizations/create-with-coordinator")
+    @PostMapping("/api/organizations/create-with-coordinator")
     public ResponseEntity<Organization> createOrganizationWithCoordinator(
             @RequestBody CreateOrgRequest request,
             @RequestParam Integer userId) {
-
+        
         try {
+            // Get the user first to get their username
+            User user = userService.findById(userId).orElseThrow(() -> 
+                new RuntimeException("User not found with ID: " + userId));
+            
             // Create organization
             Organization org = organizationService.createNewOrganization(request.toOrganization());
-
-            // Add user as coordinator
-            userOrganizationService.addUserToOrganization(String.valueOf(userId), org.getId(), "coordinator");
-
+            
+            // Add user as coordinator using their username
+            userOrganizationService.addUserToOrganization(user.getUsername(), org.getId(), "coordinator");
+            
             // Update user role to coordinator
             userService.updateUserRole(userId, "coordinator");
-
+            
             return ResponseEntity.status(HttpStatus.CREATED).body(org);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -73,6 +77,7 @@ public class OrganizationController {
         return organizationService.updateOrganization(organization);
     }
 }
+
 
 
 
