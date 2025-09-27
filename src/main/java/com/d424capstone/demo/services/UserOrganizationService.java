@@ -87,7 +87,7 @@ public class UserOrganizationService {
     // DTO mapping
     @Transactional (readOnly = true)
     public List<UserOrganizationResponseDTO> getOrganizationsByUserId(Integer userId) {
-        List<UserOrganization> userOrganizations = userOrganizationRepository.findAllByUser_Id(userId);
+        List<UserOrganization> userOrganizations = userOrganizationRepository.findAllByUserId(userId);
         return userOrganizations.stream()
                 .map(this::mapToUserOrganizationResponseDTO)
                 .collect(Collectors.toList());
@@ -119,3 +119,4 @@ public class UserOrganizationService {
 
 
 }
+
