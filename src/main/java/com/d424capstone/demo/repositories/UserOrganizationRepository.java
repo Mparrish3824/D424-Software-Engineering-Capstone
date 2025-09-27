@@ -20,4 +20,5 @@ public interface UserOrganizationRepository extends JpaRepository<UserOrganizati
 
     List<UserOrganization> findAllByOrgIdAndOrgRole(Integer orgId, String role);
 
+    List<UserOrganization> findAllByUser_Id(Integer userId);
 }
