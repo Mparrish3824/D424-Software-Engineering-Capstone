@@ -54,7 +54,6 @@ public class UserService {
     }
 
 
-
     public User updateUserRole(Integer userId, String newRole) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
@@ -66,5 +65,16 @@ public class UserService {
         return userRepository.save(user);
     }
 
-}
 
+    public User validateUserExists(Integer userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found with ID: " + userId);
+        }
+        return userOptional.get();
+    }
+
+
+
+
+}
