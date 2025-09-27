@@ -1,5 +1,6 @@
 package com.d424capstone.demo.services;
 
+import com.d424capstone.demo.dto.UserOrganizationResponseDTO;
 import com.d424capstone.demo.entities.Organization;
 import com.d424capstone.demo.entities.User;
 import com.d424capstone.demo.entities.UserOrganization;
@@ -8,9 +9,11 @@ import com.d424capstone.demo.repositories.UserOrganizationRepository;
 import com.d424capstone.demo.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserOrganizationService {
@@ -80,4 +83,39 @@ public class UserOrganizationService {
     public Optional<UserOrganization> getUserOrganization(Integer userId, Integer organizationId) {
         return userOrganizationRepository.findByUserIdAndOrgId(userId, organizationId);
     }
+
+    // DTO mapping
+    @Transactional (readOnly = true)
+    public List<UserOrganizationResponseDTO> getOrganizationsByUserId(Integer userId) {
+        List<UserOrganization> userOrganizations = userOrganizationRepository.findAllByUser_Id(userId);
+        return userOrganizations.stream()
+                .map(this::mapToUserOrganizationResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    private UserOrganizationResponseDTO mapToUserOrganizationResponseDTO(UserOrganization userOrg) {
+        return new UserOrganizationResponseDTO(
+                userOrg.getId(),
+                userOrg.getUser().getId(),
+                userOrg.getUser().getUsername(),
+                userOrg.getUser().getEmail(),
+                userOrg.getUser().getFirstName(),
+                userOrg.getUser().getLastName(),
+                userOrg.getOrg().getId(),
+                userOrg.getOrg().getOrgName(),
+                userOrg.getOrg().getOrgCode(),
+                userOrg.getOrgRole(),
+                userOrg.getJoinedAt().toString()
+        );
+    }
+
+
+
+
+
+
+
+
+
+
 }
