@@ -27,15 +27,30 @@ public class UserController {
     @GetMapping("/api/users/{userId}/organizations")
     public ResponseEntity<List<UserOrganizationResponseDTO>> getUserOrganizations(@PathVariable Integer userId) {
         try {
+            System.out.println("=== getUserOrganizations called with userId: " + userId + " ===");
+
             // Validate user exists
+            System.out.println("Step 1: Validating user exists...");
             User user = userService.validateUserExists(userId);
+            System.out.println("Step 1 SUCCESS: User found - " + user.getUsername());
 
             // Get organizations with DTO mapping
+            System.out.println("Step 2: Getting organizations by userId...");
             List<UserOrganizationResponseDTO> organizations = userOrganizationService.getOrganizationsByUserId(userId);
+            System.out.println("Step 2 SUCCESS: Found " + organizations.size() + " organizations");
 
+            // Log each organization
+            for (int i = 0; i < organizations.size(); i++) {
+                UserOrganizationResponseDTO org = organizations.get(i);
+                System.out.println("Org " + i + ": " + org.getOrgName() + " (ID: " + org.getOrgId() + ")");
+            }
+
+            System.out.println("Step 3: Returning ResponseEntity.ok()...");
             return ResponseEntity.ok(organizations);
 
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
+            System.out.println("ERROR in getUserOrganizations: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
     }
