@@ -85,16 +85,27 @@ public class UserOrganizationService {
     }
 
     // DTO mapping
-    @Transactional (readOnly = true)
+    @Transactional(readOnly = true)
     public List<UserOrganizationResponseDTO> getOrganizationsByUserId(Integer userId) {
+        System.out.println("Service: Getting user organizations for userId: " + userId);
+
         List<UserOrganization> userOrganizations = userOrganizationRepository.findAllByUserId(userId);
-        return userOrganizations.stream()
+        System.out.println("Service: Found " + userOrganizations.size() + " UserOrganization entities");
+
+        List<UserOrganizationResponseDTO> result = userOrganizations.stream()
                 .map(this::mapToUserOrganizationResponseDTO)
                 .collect(Collectors.toList());
+
+        System.out.println("Service: Mapped to " + result.size() + " DTOs");
+        return result;
     }
 
     private UserOrganizationResponseDTO mapToUserOrganizationResponseDTO(UserOrganization userOrg) {
-        return new UserOrganizationResponseDTO(
+        System.out.println("Mapping UserOrg ID: " + userOrg.getId());
+        System.out.println("User: " + userOrg.getUser().getUsername());
+        System.out.println("Org: " + userOrg.getOrg().getOrgName());
+
+        UserOrganizationResponseDTO dto = new UserOrganizationResponseDTO(
                 userOrg.getId(),
                 userOrg.getUser().getId(),
                 userOrg.getUser().getUsername(),
@@ -105,8 +116,11 @@ public class UserOrganizationService {
                 userOrg.getOrg().getOrgName(),
                 userOrg.getOrg().getOrgCode(),
                 userOrg.getOrgRole(),
-                userOrg.getJoinedAt().toString()
+                userOrg.getJoinedAt() != null ? userOrg.getJoinedAt().toString() : null
         );
+
+        System.out.println("DTO created successfully");
+        return dto;
     }
 
 
@@ -119,4 +133,3 @@ public class UserOrganizationService {
 
 
 }
-
