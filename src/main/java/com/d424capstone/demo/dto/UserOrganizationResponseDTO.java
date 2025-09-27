@@ -20,7 +20,7 @@ public class UserOrganizationResponseDTO {
 
     public UserOrganizationResponseDTO() {}
 
-    public UserOrganizationResponseDTO(Integer id, Integer userId, String username, String userEmail, String firstName, String lastName, Integer orgId, String orgName, String orgCode, String userRole, String joinedDate) {
+    public UserOrganizationResponseDTO(Integer id, Integer userId, String username, String userEmail, String firstName, String lastName, Integer orgId, String orgName, String orgCode, String orgRole, String joinedAt) {
         this.id = id;
         this.userId = userId;
         this.username = username;
@@ -30,7 +30,7 @@ public class UserOrganizationResponseDTO {
         this.orgId = orgId;
         this.orgName = orgName;
         this.orgCode = orgCode;
-        this.orgRole = userRole;
-        this.joinedAt = joinedDate;
+        this.orgRole = orgRole;
+        this.joinedAt = joinedAt;
     }
 }
