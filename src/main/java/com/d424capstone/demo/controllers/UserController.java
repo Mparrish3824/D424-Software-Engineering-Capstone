@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +22,7 @@ public class UserController {
     private UserOrganizationService userOrganizationService;
 
     @GetMapping("/api/users/{userId}/organizations")
+    @Transactional(readOnly = true)
     public List<UserOrganization> getOrganizationsByUser(@PathVariable Integer userId) {
         return userOrganizationService.getOrganizationsByUser(userId);
     }
@@ -58,6 +59,7 @@ public class UserController {
 
     
 }
+
 
 
 
