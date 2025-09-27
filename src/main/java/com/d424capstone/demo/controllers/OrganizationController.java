@@ -76,7 +76,29 @@ public class OrganizationController {
     public Organization updateOrganization(@RequestBody Organization organization) {
         return organizationService.updateOrganization(organization);
     }
+
+
+//////////////////////////////TEMPORARY/////////////////////////////
+    @GetMapping("/api/organizations/debug-mappings")
+    public ResponseEntity<String> debugMappings() {
+        return ResponseEntity.ok("Organization controller is working. Check logs for available mappings.");
+    }
+    
+    @PostMapping("/api/organizations/simple-test")
+    public ResponseEntity<String> simpleTest(@RequestParam Integer userId) {
+        return ResponseEntity.ok("Simple test works with userId: " + userId);
+    }
+
+
+
+
+
+
+
+
+    
 }
+
 
 
 
