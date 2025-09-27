@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.d424capstone.demo.dto.CreateOrgRequest;
+import com.d424capstone.demo.entities.User; 
 
 import java.util.List;
 
@@ -16,6 +17,10 @@ import java.util.List;
 public class OrganizationController {
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private UserService userService; 
+    @Autowired
+    private UserOrganizationService userOrganizationService;
 
     //Look up methods
     @GetMapping("/api/organizations/search/name")
@@ -79,16 +84,7 @@ public class OrganizationController {
     }
 
 
-//////////////////////////////TEMPORARY/////////////////////////////
-    @GetMapping("/api/organizations/debug-mappings")
-    public ResponseEntity<String> debugMappings() {
-        return ResponseEntity.ok("Organization controller is working. Check logs for available mappings.");
-    }
-    
-    @PostMapping("/api/organizations/simple-test")
-    public ResponseEntity<String> simpleTest(@RequestParam Integer userId) {
-        return ResponseEntity.ok("Simple test works with userId: " + userId);
-    }
+
 
 
 
@@ -99,6 +95,7 @@ public class OrganizationController {
 
     
 }
+
 
 
 
