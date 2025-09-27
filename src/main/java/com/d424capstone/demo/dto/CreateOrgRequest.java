@@ -4,8 +4,7 @@ import com.d424capstone.demo.entities.Organization;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+
 public class CreateOrgRequest {
     private String orgName;
     private String orgDescription;
@@ -51,4 +50,5 @@ public class CreateOrgRequest {
         org.setIsActive(true);
         return org;
     }
+
 }
