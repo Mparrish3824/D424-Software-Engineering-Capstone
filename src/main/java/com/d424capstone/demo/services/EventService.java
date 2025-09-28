@@ -1,16 +1,19 @@
 package com.d424capstone.demo.services;
 
+import com.d424capstone.demo.dto.EventResponseDTO;
 import com.d424capstone.demo.entities.Event;
 import com.d424capstone.demo.entities.Organization;
 import com.d424capstone.demo.repositories.EventRepository;
 import com.d424capstone.demo.repositories.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -143,5 +146,26 @@ public class EventService {
     public void deleteEvent(Integer orgId, Integer eventId) {
         Event event = eventRepository.findByIdAndOrgId(eventId, orgId);
         eventRepository.delete(event);
+    }
+
+    // dto
+    @Transactional (readOnly = true)
+    public List<EventResponseDTO> getEventsByOrgIdDTO(Integer orgId) {
+        List<Event> events = eventRepository.findAllByOrgId(orgId);
+        return events.stream()
+                .map(this::mapToEventResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    private EventResponseDTO mapToEventResponseDTO(Event event) {
+        return new EventResponseDTO(
+                event.getId(),
+                event.getEventName(),
+                event.getEventDescription(),
+                event.getEventType(),
+                event.getEventStatus(),
+                event.getEventDate() != null ? event.getEventDate().toString() : null,
+                event.getOrg().getId()
+        );
     }
 }
