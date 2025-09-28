@@ -32,12 +32,20 @@ public class EventController {
         }
         Event event = eventService.createEvent(newEvent, organizationService.findById(orgId).get());
 
+        System.out.println("Created event with budget: " + newEvent.getBudget());
+        System.out.println("Event budget field: " + event.getBudget());
+
         if (newEvent.getBudget() != null && newEvent.getBudget().compareTo(BigDecimal.ZERO) > 0) {
+            System.out.println("Attempting to create budget for event " + event.getId());
             try {
-                budgetService.createBudget(event.getId(), newEvent.getBudget());
+                Budget createdBudget = budgetService.createBudget(event.getId(), newEvent.getBudget());
+                System.out.println("Successfully created budget with ID: " + createdBudget.getId());
             } catch (Exception e) {
-                System.err.println("Warning: Failed to create budget for event " + event.getId() + ": " + e.getMessage());
+                System.err.println("Failed to create budget: " + e.getMessage());
+                e.printStackTrace();
             }
+        } else {
+            System.out.println("No budget to create - amount is: " + newEvent.getBudget());
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(event);
@@ -95,3 +103,4 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 }
+
