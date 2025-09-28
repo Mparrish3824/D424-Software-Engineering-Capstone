@@ -1,7 +1,8 @@
 package com.d424capstone.demo.services;
 
-import com.d424capstone.demo.entities.Organization;
-import com.d424capstone.demo.repositories.OrganizationRepository;
+import com.d424capstone.demo.dto.OrganizationStatsDTO;
+import com.d424capstone.demo.entities.*;
+import com.d424capstone.demo.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,14 @@ public class OrganizationService {
 
     @Autowired
     private OrganizationRepository organizationRepository;
+    @Autowired
+    private EventRepository eventRepository;
+    @Autowired
+    private InvitationRepository invitationRepository;
+    @Autowired
+    private BudgetRepository budgetRepository;
+    @Autowired
+    private UserOrganizationRepository userOrganizationRepository;
 
     private String generateNewCode() {
         // Generate Code
@@ -62,14 +71,58 @@ public class OrganizationService {
     }
 
     public Organization findByOrgCode(String orgCode) {
-    Optional<Organization> org = organizationRepository.findByOrgCode(orgCode);
-    if (org.isEmpty()) {
-        throw new RuntimeException("Organization not found with code: " + orgCode);
+        Optional<Organization> org = organizationRepository.findByOrgCode(orgCode);
+        if (org.isEmpty()) {
+            throw new RuntimeException("Organization not found with code: " + orgCode);
+        }
+        return org.get();
     }
-    return org.get();
+
+    public void deleteOrganization(Integer orgId) {
+        // Validate organization exists
+        Organization org = organizationRepository.findById(orgId)
+                .orElseThrow(() -> new RuntimeException("Organization not found"));
+        organizationRepository.delete(org);
+    }
+
+    // Stats
+    public OrganizationStatsDTO getOrganizationStats(Integer orgId) {
+        // Validate
+        Organization org = organizationRepository.findById(orgId)
+                .orElseThrow(() -> new RuntimeException("Organization not found"));
+
+        // members and coordinators
+        List<UserOrganization> userOrgs = userOrganizationRepository.findAllByOrgId(orgId);
+        Integer totalMembers = userOrgs.size();
+        Integer coordinators = (int) userOrgs.stream()
+                .filter(uo -> "coordinator".equals(uo.getOrgRole()))
+                .count();
+
+        // event statistics
+        List<Event> events = eventRepository.findAllByOrgId(orgId);
+        Integer totalEvents = events.size();
+        Integer activeEvents = (int) events.stream()
+                .filter(e -> "active".equals(e.getEventStatus()))
+                .count();
+
+        // pending invitations
+        List<Invitation> pendingInvitations = invitationRepository.findAllByInvitationPendingAndOrgId(orgId);
+        Integer pendingInvitationsCount = pendingInvitations.size();
+
+        // budget
+        Double totalBudget = events.stream()
+                .mapToDouble(event -> {
+                    try {
+                        Budget budget = budgetRepository.findByEvent_Id(event.getId()).orElse(null);
+                        return budget != null ? budget.getAmountTotal().doubleValue() : 0.0;
+                    } catch (Exception e) {
+                        return 0.0;
+                    }
+                })
+                .sum();
+
+        return new OrganizationStatsDTO(totalMembers, coordinators, totalEvents,
+                activeEvents, pendingInvitationsCount, totalBudget);
+    }
+
 }
-
-
-    
-}
-
