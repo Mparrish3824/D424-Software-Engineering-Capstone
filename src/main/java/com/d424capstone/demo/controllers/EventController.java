@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import com.d424capstone.demo.entities.Budget;
+
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -103,4 +105,5 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 }
+
 
