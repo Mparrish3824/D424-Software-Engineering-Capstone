@@ -7,6 +7,7 @@ import com.d424capstone.demo.services.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -44,6 +45,7 @@ public class EventController {
     }
 
     @GetMapping("/api/organizations/{orgId}/events/{eventId}")
+    @Transactional(readOnly = true)
     public ResponseEntity<Event> getEvent(@PathVariable Integer orgId, @PathVariable Integer eventId) {
         return  ResponseEntity.ok(eventService.getEventByIdAndOrgId(eventId, orgId));
     }
@@ -67,3 +69,4 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 }
+
