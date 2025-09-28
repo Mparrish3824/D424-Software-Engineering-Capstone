@@ -1,5 +1,6 @@
 package com.d424capstone.demo.controllers;
 
+import com.d424capstone.demo.dto.EventResponseDTO;
 import com.d424capstone.demo.entities.Event;
 import com.d424capstone.demo.services.EventService;
 import com.d424capstone.demo.services.OrganizationService;
@@ -29,14 +30,17 @@ public class EventController {
     }
 
     @GetMapping("/api/organizations/{orgId}/events")
-    public List<Event> getEvents(
-            @PathVariable Integer orgId,
-            @RequestParam(required = false) String type,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate
-    ) {
-        return eventService.getFilteredEvents(orgId, type, status, startDate, endDate);
+    public ResponseEntity<List<EventResponseDTO>> getEvents(@PathVariable Integer orgId,
+                                                            @RequestParam(required = false) String type,
+                                                            @RequestParam(required = false) String status,
+                                                            @RequestParam(required = false) String startDate,
+                                                            @RequestParam(required = false) String endDate) {
+        try {
+            List<EventResponseDTO> events = eventService.getEventsByOrgIdDTO(orgId);
+            return ResponseEntity.ok(events);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/api/organizations/{orgId}/events/{eventId}")
