@@ -46,8 +46,21 @@ public class EventController {
 
     @GetMapping("/api/organizations/{orgId}/events/{eventId}")
     @Transactional(readOnly = true)
-    public ResponseEntity<Event> getEvent(@PathVariable Integer orgId, @PathVariable Integer eventId) {
-        return  ResponseEntity.ok(eventService.getEventByIdAndOrgId(eventId, orgId));
+    public ResponseEntity<EventResponseDTO> getEvent(@PathVariable Integer orgId, @PathVariable Integer eventId) {
+        Event event = eventService.getEventByIdAndOrgId(eventId, orgId);
+
+        // Convert to DTO to avoid lazy loading issues
+        EventResponseDTO eventDTO = new EventResponseDTO(
+                event.getId(),
+                event.getEventName(),
+                event.getEventDescription(),
+                event.getEventType(),
+                event.getEventStatus(),
+                event.getEventDate().toString(), // Convert LocalDate to String
+                event.getOrg().getId() // This works because we're in a transaction
+        );
+
+        return ResponseEntity.ok(eventDTO);
     }
 
     @PutMapping("/api/organizations/{orgId}/events/{eventId}")
@@ -69,4 +82,5 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 }
+
 
