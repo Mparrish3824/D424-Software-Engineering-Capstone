@@ -69,7 +69,6 @@ public class UserOrganizationController {
         );
     }
 
-
         // Get users by role
     @GetMapping("/api/organizations/{orgId}/users/{role}")
     public List<UserOrganization> getUsersByRoleInOrganization(@PathVariable Integer orgId, @PathVariable String role) {
@@ -77,20 +76,20 @@ public class UserOrganizationController {
     }
 
     // PUT
-        // Update user's role
     @PutMapping("/api/organizations/{orgId}/users/{username}")
-    public ResponseEntity<String> updateUserToOrganization(
+    public ResponseEntity<UserOrganizationResponseDTO> updateUserToOrganization(
             @PathVariable Integer orgId,
             @PathVariable String username,
             @RequestBody String role) {
         try {
-            userOrganizationService.updateUserRole(username, orgId, role);
-            return ResponseEntity.status(HttpStatus.OK).body("User role successfully updated");
+            UserOrganization updated = userOrganizationService.updateUserRole(username, orgId, role);
+            UserOrganizationResponseDTO dto = mapToDTO(updated);
+            return ResponseEntity.ok(dto);
         } catch (RuntimeException e) {
             if(e.getMessage().contains("not found")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-            }  else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
         }
     }
@@ -109,9 +108,6 @@ public class UserOrganizationController {
         }
     }
 }
-
-
-
 
 
 
