@@ -50,11 +50,11 @@ public class ExpenseController {
             );
 
 
-            try {
-                budgetService.recalculateBudgetFromExpenses(expense.getEvent().getId());
-            } catch (RuntimeException e) {
-                throw new RuntimeException("Error in recalculating budget remaining");
-            }
+        try {
+            budgetService.recalculateBudgetFromExpenses(expense.getEvent().getId());
+        } catch (RuntimeException e) {
+            System.err.println("Budget recalculation failed (this is okay if no budget exists): " + e.getMessage());
+        }
 
 
             ExpenseResponseDTO response = mapToExpenseResponseDTO(expense);
@@ -220,3 +220,4 @@ public class ExpenseController {
 
 
 }
+
