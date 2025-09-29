@@ -51,12 +51,12 @@ public class InvitationController {
         return ResponseEntity.ok(response);
     }
 
-    private InvitationResponseDTO mapToDTO(Invitation inv) {
+private InvitationResponseDTO mapToDTO(Invitation inv) {
         return new InvitationResponseDTO(
-                inv.getId(),                    
+                inv.getId(),
                 inv.getEmail(),
                 inv.getOrgRole(),
-                inv.getInvitedBy().getEmail(),
+                inv.getInvitedBy() != null ? inv.getInvitedBy().getEmail() : "Unknown", 
                 inv.getInvitationStatus(),
                 inv.getCreatedDate() != null ? inv.getCreatedDate().toString() : null,
                 inv.getExpiresAt() != null ? inv.getExpiresAt().toString() : null,
@@ -81,3 +81,4 @@ public class InvitationController {
         return ResponseEntity.ok("Invitation cancelled");
     }
 }
+
