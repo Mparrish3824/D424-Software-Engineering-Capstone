@@ -87,15 +87,33 @@ public class EventController {
     }
 
     @PutMapping("/api/organizations/{orgId}/events/{eventId}")
-    public ResponseEntity<Event> updateEvent(
+    @Transactional
+    public ResponseEntity<EventResponseDTO> updateEvent(
             @PathVariable Integer orgId,
             @PathVariable Integer eventId,
             @RequestBody Event updatedEvent
     ) {
-        updatedEvent.setId(eventId);
-        updatedEvent.setOrg(organizationService.findById(orgId).get());
-
-        return ResponseEntity.ok(eventService.updateEvent(updatedEvent, orgId));
+        try {
+            updatedEvent.setId(eventId);
+            updatedEvent.setOrg(organizationService.findById(orgId).get());
+            
+            Event event = eventService.updateEvent(updatedEvent, orgId);
+            
+            // Map to DTO to avoid lazy loading issues
+            EventResponseDTO response = new EventResponseDTO(
+                    event.getId(),
+                    event.getEventName(),
+                    event.getEventDescription(),
+                    event.getEventType(),
+                    event.getEventStatus(),
+                    event.getEventDate().toString(),
+                    event.getOrg().getId()
+            );
+            
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @DeleteMapping("/api/organizations/{orgId}/events/{eventId}")
@@ -105,5 +123,6 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 }
+
 
 
