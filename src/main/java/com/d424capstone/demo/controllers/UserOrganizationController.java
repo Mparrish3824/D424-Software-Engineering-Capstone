@@ -35,11 +35,38 @@ public class UserOrganizationController {
         }
     }
     // GET
-        // Get all users
     @GetMapping("/api/organizations/{orgId}/users")
-    public List<UserOrganization> getUsersByOrganization(@PathVariable Integer orgId) {
-        return userOrganizationService.getUsersByOrganization(orgId);
+    @Transactional (readOnly = true)
+    public ResponseEntity<List<UserOrganizationResponseDTO>> getUsersByOrganization(@PathVariable Integer orgId) {
+        try {
+            List<UserOrganization> userOrgs = userOrganizationService.getUsersByOrganization(orgId);
+
+            List<UserOrganizationResponseDTO> response = userOrgs.stream()
+                    .map(this::mapToDTO)
+                    .toList();
+
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
+    private UserOrganizationResponseDTO mapToDTO(UserOrganization userOrg) {
+        return new UserOrganizationResponseDTO(
+                userOrg.getId(),
+                userOrg.getUser().getId(),
+                userOrg.getUser().getUsername(),
+                userOrg.getUser().getEmail(),
+                userOrg.getUser().getFirstName(),
+                userOrg.getUser().getLastName(),
+                userOrg.getOrg().getId(),
+                userOrg.getOrg().getOrgName(),
+                userOrg.getOrg().getOrgCode(),
+                userOrg.getOrgRole(),
+                userOrg.getJoinedAt() != null ? userOrg.getJoinedAt().toString() : null
+        );
+    }
+
 
         // Get users by role
     @GetMapping("/api/organizations/{orgId}/users/{role}")
@@ -80,6 +107,7 @@ public class UserOrganizationController {
         }
     }
 }
+
 
 
 
