@@ -14,10 +14,15 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:4200", "https://update-firebase-app.web.app")
+                .allowedOrigins(
+                        "http://localhost:4200",
+                        "https://nonprofit-event-management-app.web.app",
+                        "https://nonprofit-event-management-app.firebaseapp.com"
+                )                
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
 }
+
 
