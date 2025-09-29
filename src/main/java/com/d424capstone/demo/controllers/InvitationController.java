@@ -1,9 +1,11 @@
 package com.d424capstone.demo.controllers;
 
+import com.d424capstone.demo.dto.InvitationResponseDTO;
 import com.d424capstone.demo.entities.Invitation;
 import com.d424capstone.demo.services.InvitationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,19 +27,41 @@ public class InvitationController {
     }
 
     @GetMapping("/api/organizations/{orgId}/invitations")
-    public List<Invitation> getInvitationsByOrg(
+    @Transactional (readOnly = true)
+    public ResponseEntity<List<InvitationResponseDTO>> getInvitationsByOrg(
             @PathVariable Integer orgId,
-            @RequestParam(required = false) String status
-    ) {
+            @RequestParam(required = false) String status) {
+
+        List<Invitation> invitations;
+
         if (status == null) {
-            return invitationService.getAllInvitationsByOrg(orgId);
+            invitations = invitationService.getAllInvitationsByOrg(orgId);
         } else if (status.equals("pending")) {
-            return invitationService.getPendingInvitationsByOrg(orgId);
+            invitations = invitationService.getPendingInvitationsByOrg(orgId);
         } else if (status.equals("expired")) {
-            return invitationService.getExpiredInvitationsByOrg(orgId);
+            invitations = invitationService.getExpiredInvitationsByOrg(orgId);
         } else {
             throw new RuntimeException("Invalid status parameter");
         }
+
+        List<InvitationResponseDTO> response = invitations.stream()
+                .map(this::mapToDTO)
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
+
+    private InvitationResponseDTO mapToDTO(Invitation inv) {
+        return new InvitationResponseDTO(
+                inv.getId(),                    
+                inv.getEmail(),
+                inv.getOrgRole(),
+                inv.getInvitedBy().getEmail(),
+                inv.getInvitationStatus(),
+                inv.getCreatedDate() != null ? inv.getCreatedDate().toString() : null,
+                inv.getExpiresAt() != null ? inv.getExpiresAt().toString() : null,
+                inv.getInvitationToken()
+        );
     }
 
     @PutMapping("/api/organizations/{orgId}/invitations/accept")
