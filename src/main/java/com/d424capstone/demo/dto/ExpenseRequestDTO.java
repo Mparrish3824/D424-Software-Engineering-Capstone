@@ -16,6 +16,8 @@ public class ExpenseRequestDTO {
     private String paymentStatus;
     private String paymentMethod;
     private String vendorName;
+
+    @JsonFormat (pattern = "yyyy-MM-dd")
     private LocalDate dateIncurred;
     private String invoiceUrl;
     private String receiptUrl;
@@ -36,3 +38,4 @@ public class ExpenseRequestDTO {
     public ExpenseRequestDTO() {
     }
 }
+
