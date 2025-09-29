@@ -65,7 +65,7 @@ public class ExpenseService {
         expense.setPaymentStatus(paymentStatus != null ? paymentStatus : "pending");
         expense.setPaymentMethod(paymentMethod);
         expense.setVendorName(vendorName);
-        expense.setDateIncurred(dateIncurred);
+        expense.setDateIncurred(dateIncurred != null ? dateIncurred : LocalDate.now());        
         expense.setInvoiceUrl(invoiceUrl);
         expense.setReceiptUrl(receiptUrl);
         expense.setDateAdded(Instant.now());
@@ -274,3 +274,4 @@ public class ExpenseService {
 
 
 }
+
