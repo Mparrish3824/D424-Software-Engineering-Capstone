@@ -1,5 +1,6 @@
 package com.d424capstone.demo.controllers;
 
+import com.d424capstone.demo.dto.UserOrganizationResponseDTO;
 import com.d424capstone.demo.entities.User;
 import com.d424capstone.demo.entities.UserOrganization;
 import com.d424capstone.demo.services.UserOrganizationService;
@@ -108,6 +109,7 @@ public class UserOrganizationController {
         }
     }
 }
+
 
 
 
