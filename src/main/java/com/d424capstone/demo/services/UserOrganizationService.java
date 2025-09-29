@@ -54,13 +54,14 @@ public class UserOrganizationService {
     }
 
     // Change user role in organization
-    public void updateUserRole(String username, Integer organizationId, String role) {
+    public UserOrganization updateUserRole(String username, Integer organizationId, String role) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Username not " +
                 "found: " + username));
         UserOrganization userOrg =
                 userOrganizationRepository.findByUserIdAndOrgId(user.getId(), organizationId).orElseThrow(() -> new RuntimeException("User is not a member of this organization"));
         userOrg.setOrgRole(role);
         userOrganizationRepository.save(userOrg);
+        return userOrg;
     }
 
 
