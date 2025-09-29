@@ -28,42 +28,52 @@ public class ExpenseController {
 //                           POST MAPPING
 // ============================================================================
 
-    @PostMapping("/api/organizations/{orgId}/events/{eventId}/expenses")
-    public ResponseEntity<ExpenseResponseDTO> createExpense(
-            @PathVariable Integer orgId,
-            @PathVariable Integer eventId,
-            @RequestBody ExpenseRequestDTO request){
-        try{
-            eventService.validateEventBelongsToOrg(eventId, orgId);
-            Expense expense = expenseService.createExpense(
-                    eventId,
-                    request.getTitle(),
-                    request.getExpenseDescription(),
-                    request.getAmount(),
-                    request.getCategory(),
-                    request.getPaymentStatus(),
-                    request.getPaymentMethod(),
-                    request.getVendorName(),
-                    request.getDateIncurred(),
-                    request.getInvoiceUrl(),
-                    request.getReceiptUrl()
-            );
+@PostMapping("/api/organizations/{orgId}/events/{eventId}/expenses")
+public ResponseEntity<ExpenseResponseDTO> createExpense(
+        @PathVariable Integer orgId,
+        @PathVariable Integer eventId,
+        @RequestBody ExpenseRequestDTO request){
+    try{
+        System.out.println("Creating expense for event: " + eventId);
+        System.out.println("Request data: " + request.getExpenseDescription() + ", " + request.getAmount());
+        
+        eventService.validateEventBelongsToOrg(eventId, orgId);
+        System.out.println("Event validation passed");
+        
+        Expense expense = expenseService.createExpense(
+                eventId,
+                request.getTitle(),
+                request.getExpenseDescription(),
+                request.getAmount(),
+                request.getCategory(),
+                request.getPaymentStatus(),
+                request.getPaymentMethod(),
+                request.getVendorName(),
+                request.getDateIncurred(),
+                request.getInvoiceUrl(),
+                request.getReceiptUrl()
+        );
+        
+        System.out.println("Expense created with ID: " + (expense != null ? expense.getId() : "NULL"));
 
-
+        // Try budget recalculation
         try {
             budgetService.recalculateBudgetFromExpenses(expense.getEvent().getId());
+            System.out.println("Budget recalculated successfully");
         } catch (RuntimeException e) {
-            System.err.println("Budget recalculation failed (this is okay if no budget exists): " + e.getMessage());
+            System.out.println("Budget recalculation skipped: " + e.getMessage());
         }
 
-
-            ExpenseResponseDTO response = mapToExpenseResponseDTO(expense);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        ExpenseResponseDTO response = mapToExpenseResponseDTO(expense);
+        System.out.println("Response DTO created: " + (response != null ? "SUCCESS" : "NULL"));
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    } catch (RuntimeException e){
+        System.out.println("ERROR creating expense: " + e.getMessage());
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
-
+}
 // ============================================================================
 //                            GET MAPPING
 // ============================================================================
@@ -220,4 +230,5 @@ public class ExpenseController {
 
 
 }
+
 
