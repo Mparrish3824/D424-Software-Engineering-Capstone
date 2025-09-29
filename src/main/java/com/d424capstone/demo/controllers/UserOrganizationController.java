@@ -77,19 +77,18 @@ public class UserOrganizationController {
 
     // PUT
     @PutMapping("/api/organizations/{orgId}/users/{username}")
-    public ResponseEntity<UserOrganizationResponseDTO> updateUserToOrganization(
+    public ResponseEntity<String> updateUserToOrganization(
             @PathVariable Integer orgId,
             @PathVariable String username,
             @RequestBody String role) {
         try {
-            UserOrganization updated = userOrganizationService.updateUserRole(username, orgId, role);
-            UserOrganizationResponseDTO dto = mapToDTO(updated);
-            return ResponseEntity.ok(dto);
+            userOrganizationService.updateUserRole(username, orgId, role);
+            return ResponseEntity.ok("User role successfully updated");
         } catch (RuntimeException e) {
             if(e.getMessage().contains("not found")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
             }
         }
     }
@@ -108,6 +107,7 @@ public class UserOrganizationController {
         }
     }
 }
+
 
 
 
