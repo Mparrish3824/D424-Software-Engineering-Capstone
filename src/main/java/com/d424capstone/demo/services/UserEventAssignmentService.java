@@ -184,6 +184,17 @@ public class UserEventAssignmentService {
 
     @Transactional (readOnly = true)
     protected AssignmentResponseDTO mapToDTO(UserEventAssignment assignment) {
+        User user = assignment.getUser();
+
+        // Create nested user DTO
+        AssignmentResponseDTO.UserDTO userDTO = new AssignmentResponseDTO.UserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName()
+        );
+
         return new AssignmentResponseDTO(
                 assignment.getId(),
                 assignment.getUser().getId(),
@@ -195,7 +206,8 @@ public class UserEventAssignmentService {
                 assignment.getRoleDescription(),
                 assignment.getAssignmentStatus(),
                 assignment.getNotes(),
-                assignment.getCreatedAt()
+                assignment.getCreatedAt(),
+                userDTO
         );
     }
 
