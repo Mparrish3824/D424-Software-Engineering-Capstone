@@ -78,11 +78,11 @@ public class BudgetService {
     }
 
     @Transactional
-    public Budget recalculateBudgetFromExpenses(Integer budgetId){
-        Budget budget = validateBudgetExists(budgetId);
+    public Budget recalculateBudgetFromExpenses(Integer eventId){
+        Budget budget = budgetRepository.findByEvent_Id(eventId)
+                .orElseThrow(() -> new RuntimeException("Budget not found for event"));
 
-        // get total from expenses
-        BigDecimal totalSpent = expenseService.getTotalExpensesByEventId(budget.getEvent().getId());
+        BigDecimal totalSpent = expenseService.getTotalExpensesByEventId(eventId);
 
         budget.setAmountSpent(totalSpent);
         budget.setAmountRemaining(budget.getAmountTotal().subtract(totalSpent));
